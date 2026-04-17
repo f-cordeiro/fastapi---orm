@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos</title>
+    <!--Importar o arquivo CSS da pasta /static-->
+    <link rel="stylesheet" href="{{request.url_for('static',path='style.css')}}">
+</head>
+<body>
+    <div class="container">
+    <h1>Lista de alunos</h1>   
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Nota</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alunos %}
+                <tr class="{% if a.nota >= 6 %}aprovado{% else %}reprovado{% endif %}">
+                    <td>{{a.nome}}</td>
+                    <td>{{a.nota}}</td>
+                    <td>
+                        {% if a.nota >=6 %}
+                            ✅Aprovado
+                        {% else %}
+                           ❌ Reprovado
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table> 
+    </div>
+</body>
+</html>

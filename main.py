@@ -1,12 +1,14 @@
 #Fastapi
 # pip install fastapi uvicorn jinja2 python-multipart
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 #Para salvar o css em outra pasta
 from fastapi.staticfiles import StaticFiles
+from models import get_db, Curso, Aluno
+from sqlalchemy.orm import Session
 
 #Rodar o servidor: python -m uvicorn main:app --reload
 app = FastAPI(title="Gestão escolar")
@@ -47,3 +49,23 @@ def listar_alunos(request: Request) :
         {"request": request, "alunos": alunos}
     )
 
+@app.get("/curso/cadastro")
+def exibir_cadastro_curso(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "cadastro_curso.html",
+        {"request": request}
+    )
+
+@app.post("/curso")
+def criar_curso(
+    nome: str = Form(...),
+    duracao_dias: int = Form(...),
+    descricao: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    novo_curso = Curso(nome=nome, duracao_dias=duracao_dias, descricao=descricao)
+    db.add(novo_curso)
+    db.commit()
+
+    return RedirectResponse(url="/", status_code=303)
